@@ -1,31 +1,9 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+# تجاهل المجلدات غير الضرورية
 venv/
-env/
-ENV/
+__pycache__/
+~
 
-# Logs
+# تجاهل ملفات السجلات والملفات المخزنة مؤقتًا
 *.log
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment
-.env
-.env.local
-
-# Odoo specific
 *.pyc
 *.pyo
-

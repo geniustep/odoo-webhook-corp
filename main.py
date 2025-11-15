@@ -29,6 +29,7 @@ app = FastAPI(
 ALLOWED_ORIGINS = [
     "https://app.propanel.ma",
     "https://flutter.propanel.ma",
+    "https://webhook.geniura.com",
     "http://localhost:3000",
     "http://localhost:5173",
 ]

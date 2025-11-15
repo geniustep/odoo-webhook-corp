@@ -51,10 +51,7 @@ def check_updates(
     Returns a lightweight summary of update.webhook since a timestamp (optional).
     Rate limited to 10 requests/minute per IP.
     """
-    limiter: Limiter = _get_limiter(request)
-    key = get_remote_address(request)
-    if not limiter.hit("updates_check", key, limit=10, period=60):
-        raise HTTPException(status_code=429, detail="Too many requests, slow down.")
+    # Rate limiting handled by SlowAPIMiddleware in main.py
 
     try:
         data = client.get_updates_summary(limit=limit, since=since)
@@ -81,10 +78,7 @@ def cleanup_updates(
     Cleanup update.webhook rows older than a given ISO timestamp.
     Rate limited to 5 requests/minute per IP.
     """
-    limiter: Limiter = _get_limiter(request)
-    key = get_remote_address(request)
-    if not limiter.hit("updates_cleanup", key, limit=5, period=60):
-        raise HTTPException(status_code=429, detail="Too many requests, slow down.")
+    # Rate limiting handled by SlowAPIMiddleware in main.py
 
     try:
         deleted = client.cleanup_updates(before=before)

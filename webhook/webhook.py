@@ -39,6 +39,9 @@ def get_client(session_id: str = Depends(get_session_id)) -> OdooClient:
     )
 
 # ===== Routes =====
+def _get_limiter(request: Request) -> Limiter:
+    return request.app.state.limiter
+
 @router.get("/events", response_model=EventsResponse)
 def list_events(
     request: Request,
@@ -54,11 +57,7 @@ def list_events(
     List raw events from update.webhook with useful filters.
     Rate limited to 30 requests/minute per IP.
     """
-    # Rate limiting (30 طلب/دقيقة لكل IP)
-    limiter: Limiter = request.app.state.limiter
-    key = get_remote_address(request)
-    if not limiter.hit("webhook_events", key, limit=30, period=60):
-        raise HTTPException(status_code=429, detail="Too many requests, slow down.")
+    # Rate limiting handled by SlowAPIMiddleware in main.py
 
     # Build domain
     domain = []
