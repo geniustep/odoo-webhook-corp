@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_update_webhook,access.update.webhook,model_update_webhook,base.group_user,1,0,0,1
+access_user_sync_state,access.user.sync.state,model_user_sync_state,base.group_user,1,1,1,1
+access_webhook_archiver,access.webhook.archiver,model_webhook_archiver,base.group_system,1,0,0,0

@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 class UpdateWebhook(models.Model):
     _name = "update.webhook"
     _description = "Store webhook updates from FastAPI"
-    _order = "timestamp desc"
+    _order = "id desc"  # Changed from timestamp to id for better performance
 
     model = fields.Char(string="Model", required=True, index=True)
     record_id = fields.Integer(string="Record ID", required=True, index=True)
@@ -22,6 +22,27 @@ class UpdateWebhook(models.Model):
         readonly=True,
         required=True,
         default=fields.Datetime.now,
+        index=True,
+    )
+
+    # ========== Archiving Support Fields ==========
+    is_archived = fields.Boolean(
+        string="Archived",
+        default=False,
+        index=True,
+        help="True when event is archived (all users synced or too old)"
+    )
+
+    archive_date = fields.Datetime(
+        string="Archive Date",
+        readonly=True,
+        help="When this event was archived"
+    )
+
+    min_users_synced = fields.Integer(
+        string="Users Synced Count",
+        default=0,
+        help="Number of users who synced this event"
     )
 
     _sql_constraints = [
@@ -82,6 +103,19 @@ class UpdateWebhook(models.Model):
                     'timestamp': fields.Datetime.now()
                 })
                 _logger.error(f"❌ Error logging webhook event: {e}")
+
+    def mark_as_synced_by_user(self):
+        """Increment sync counter when a user syncs this event"""
+        self.ensure_one()
+        self.write({'min_users_synced': self.min_users_synced + 1})
+
+    def archive_events(self):
+        """Archive these events"""
+        self.write({
+            'is_archived': True,
+            'archive_date': fields.Datetime.now()
+        })
+        _logger.info(f"📦 Archived {len(self)} webhook events")
 
 
 
