@@ -16,7 +16,7 @@ from webhook.webhook import router as webhook_router
 # Initialize FastAPI
 # ==========================
 app = FastAPI(
-    title="Odoo Webhook API",
+    title="Odoo Webhook Server",
     version="2.0.0",
     description="API for Odoo webhooks integration",
     docs_url="/docs",
@@ -67,7 +67,7 @@ app.include_router(webhook_router)   # /api/v1/webhook/events
 @app.get("/", tags=["General"])
 def root():
     return {
-        "message": "Welcome to Odoo Webhook API",
+        "message": "Welcome to Odoo Webhook Server",
         "status": "running",
         "version": "2.0.0",
         "services": {

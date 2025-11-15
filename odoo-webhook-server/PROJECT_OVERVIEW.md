@@ -1,4 +1,4 @@
-# 📊 نظرة شاملة على المشروع FastAPI
+# 📊 نظرة شاملة على مشروع Odoo Webhook Server
 
 ## 🏗️ البنية الحالية
 
@@ -17,29 +17,21 @@
 
 ### **معلومات التطبيق:**
 ```python
-title: "Odoo Webhook & Medical API"
-version: "3.0.0"
-description: "API for Odoo webhooks, HPO Medical Terms, and Disease Diagnosis"
+title: "Odoo Webhook Server"
+version: "2.0.0"
+description: "API for Odoo webhooks integration"
 ```
 
-### **الـ Routers المسجلة (5 routers):**
+### **الـ Routers المسجلة (2 routers):**
 
 ```python
 1. updates_router       من webhook/update_webhook.py
    └── /api/v1/check-updates
    └── /api/v1/cleanup
+   └── /api/v1/health
 
 2. webhook_router       من webhook/webhook.py
    └── /api/v1/webhook/events
-
-3. hpo_router          من hpo/hpo_routes.py
-   └── /api/v1/hpo/*
-
-4. disease_router      من hpo/disease_routes.py
-   └── /api/v1/diseases/*
-
-5. diagnosis_router    من hpo/diagnosis/enhanced_diagnosis_api.py
-   └── /api/v1/diagnosis/*
 ```
 
 ---
@@ -58,33 +50,7 @@ webhook/
 
 ---
 
-### 2️⃣ **HPO Module** (`/hpo/`)
-```
-hpo/
-├── __init__.py
-├── database.py            → اتصال PostgreSQL (Neon)
-├── hpo_routes.py          → HPO Terms API
-├── disease_routes.py      → Diseases & Diagnosis API
-├── import_hpo.py          → سكريبت استيراد البيانات
-├── link_specialties.py    → ربط التخصصات
-└── diagnosis/             → التشخيص المحسّن ⭐
-    ├── __init__.py
-    ├── enhanced_diagnosis_api.py   → API endpoints
-    ├── red_flags.py               → كشف الحالات الحرجة
-    ├── cross_specialty.py         → تحليل متعدد التخصصات
-    ├── differential_diagnosis.py  → التشخيص التفاضلي
-    └── TEST_RESULTS.md           → تقرير الاختبارات
-```
-
-**الوظائف:**
-- إدارة HPO Terms (Human Phenotype Ontology)
-- تشخيص الأمراض
-- كشف العلامات الحمراء الخطيرة
-- تحليل متعدد التخصصات
-
----
-
-### 3️⃣ **Core Module** (`/core/`)
+### 2️⃣ **Core Module** (`/core/`)
 ```
 core/
 └── auth.py               → المصادقة (حالياً بسيط)
@@ -92,7 +58,7 @@ core/
 
 ---
 
-### 4️⃣ **Clients Module** (`/clients/`)
+### 3️⃣ **Clients Module** (`/clients/`)
 ```
 clients/
 └── (ملفات العملاء - إن وجدت)
@@ -107,24 +73,15 @@ clients/
 | الخدمة | الحالة | المسارات |
 |--------|--------|----------|
 | **Webhook** | ✅ Active | `/api/v1/webhook/*` |
-| **HPO Terms** | ✅ Active | `/api/v1/hpo/*` |
-| **Diseases** | ✅ Active | `/api/v1/diseases/*` |
-| **Enhanced Diagnosis** | ✅ Active | `/api/v1/diagnosis/*` |
 | **Updates** | ✅ Active | `/api/v1/check-updates`, `/api/v1/cleanup` |
+| **Health** | ✅ Active | `/api/v1/health` |
 
 ---
 
 ## 🗄️ قاعدة البيانات
 
-### **PostgreSQL (Neon)**
-```python
-DATABASE_URL = "postgresql://neondb_owner:...@ep-holy-bonus-ag0vglfv-pooler.c-2.eu-central-1.aws.neon.tech/neondb"
-```
-
-**الجداول:**
-- `hpo_terms` - المصطلحات الطبية
-- `diseases` - الأمراض
-- `disease_phenotypes` - علاقة الأمراض بالأعراض
+### **Odoo Database**
+المشروع يتصل بقاعدة بيانات Odoo عبر API وليس قاعدة بيانات محلية.
 
 ---
 
@@ -152,7 +109,7 @@ ALLOWED_ORIGINS = [
 /opt/webhook_server/
 ├── config.py              → إعدادات المشروع
 ├── requirements.txt       → المكتبات المطلوبة
-├── test_diagnosis_api.py  → اختبارات التشخيص
+├── Dockerfile             → ملف Docker
 ├── webhook.log           → سجلات Webhook
 ├── auth.log              → سجلات المصادقة
 └── venv/                 → البيئة الافتراضية
@@ -174,10 +131,10 @@ ALLOWED_ORIGINS = [
 | العنصر | العدد |
 |--------|-------|
 | **تطبيقات FastAPI** | 1 (main.py) |
-| **Routers** | 5 routers |
-| **Modules** | 4 modules (webhook, hpo, core, clients) |
-| **API Endpoints** | ~30+ endpoint |
-| **قواعد البيانات** | 1 (PostgreSQL - Neon) |
+| **Routers** | 2 routers |
+| **Modules** | 3 modules (webhook, core, clients) |
+| **API Endpoints** | 4 endpoints |
+| **قواعد البيانات** | 0 (يتصل بـ Odoo API) |
 
 ---
 
@@ -185,10 +142,10 @@ ALLOWED_ORIGINS = [
 
 ### ✅ **ما هو نشط:**
 - ✅ تطبيق FastAPI واحد في `main.py`
-- ✅ 5 routers متكاملة
-- ✅ نظام تشخيص طبي محسّن
-- ✅ اتصال بقاعدة بيانات PostgreSQL
+- ✅ 2 routers متكاملة
+- ✅ اتصال بـ Odoo API
 - ✅ CORS و Rate Limiting
+- ✅ نظام مصادقة عبر Session ID
 
 ### ❌ **ما هو غير مستخدم:**
 - ❌ `webhook_server.py` (قديم ومعطل)
